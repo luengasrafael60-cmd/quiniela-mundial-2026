@@ -167,6 +167,17 @@ router.post('/classified', async (req, res) => {
     state.thirdPlaceLocked = true;
     await state.save();
 
+    // Recalcular puntos de picks de mejores terceros
+    // Un pick de mejor tercero da punto si el equipo clasificó como 1°, 2° o mejor 3°
+    const GroupResultTP = (await import('../models/GroupResult.js')).default;
+    const allGRforTP = await GroupResultTP.find();
+    const allGroupClassifiedTP = allGRforTP.flatMap(r => [r.first, r.second]).filter(Boolean);
+    const allThirdPicks = await ThirdPlacePicks.find();
+    for (const tp of allThirdPicks) {
+      tp.pointsEarned = calcThirdPlacePoints(tp.picks || [], bestThirds || [], allGroupClassifiedTP).pts;
+      await tp.save();
+    }
+
     await recalcAllUserTotals();
     res.json({ message: 'Clasificados guardados correctamente' });
   } catch (err) { res.status(500).json({ error: err.message }); }
