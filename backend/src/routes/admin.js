@@ -293,9 +293,12 @@ router.post('/recalculate-all', async (req, res) => {
     for (const m of allMatches) await recalcMatchPredictions(m);
     const state = await getState();
     if (state.bestThirds?.length) {
+      // allGroupClassified = todos los que clasificaron como 1° o 2° de algún grupo
+      const allGR2 = await GroupResult.find();
+      const allGroupClassified = allGR2.flatMap(r => [r.first, r.second]).filter(Boolean);
       const allPicks = await ThirdPlacePicks.find();
       for (const tp of allPicks) {
-        tp.pointsEarned = calcThirdPlacePoints(tp.picks || [], state.bestThirds || []).pts;
+        tp.pointsEarned = calcThirdPlacePoints(tp.picks || [], state.bestThirds || [], allGroupClassified).pts;
         await tp.save();
       }
     }

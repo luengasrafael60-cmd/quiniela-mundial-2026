@@ -64,12 +64,17 @@ export function calcGroupPoints(prediction, actualFirst, actualSecond, bestThird
   return { pts, breakdown };
 }
 
-/** Puntos por mejor tercero */
-export function calcThirdPlacePoints(userPicks, actualThirdAdvancers) {
+/** Puntos por mejor tercero
+ * Un pick de mejor tercero da punto si el equipo clasificó de CUALQUIER forma:
+ * como 1°, 2° o como mejor tercero real.
+ */
+export function calcThirdPlacePoints(userPicks, actualThirdAdvancers, allGroupClassified = []) {
   let pts = 0;
   let breakdown = [];
+  // allGroupClassified incluye todos los que avanzaron (1°, 2° y mejores 3ros)
+  const allAdvanced = [...new Set([...actualThirdAdvancers, ...allGroupClassified])].filter(Boolean);
   for (const pick of (userPicks || [])) {
-    if (actualThirdAdvancers.includes(pick)) {
+    if (allAdvanced.includes(pick)) {
       pts += POINTS.THIRD_CORRECT;
       breakdown.push({ team: pick, reason: 'Mejor tercero clasificó', pts: POINTS.THIRD_CORRECT });
     }
