@@ -27,6 +27,7 @@ router.get('/stats', async (req, res) => {
       QuinielaGroup.countDocuments(),
       getState(),
     ]);
+    
     const correctPreds = await Prediction.countDocuments({ resultCorrectWinner: true });
     const totalPreds   = await Prediction.countDocuments({ resultCorrectWinner: { $ne: null } });
     const accuracy     = totalPreds ? Math.round((correctPreds / totalPreds) * 100) : 0;
