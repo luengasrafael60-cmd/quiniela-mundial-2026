@@ -11,7 +11,7 @@ const PLAYER_NAV = [
 ];
 
 const PLAYER_NAV_MORE = [
-  { to:'/tablas',       label:'Tablas',      icon:'📊' },
+  // { to:'/tablas',       label:'Tablas',      icon:'📊' },
   { to:'/especiales',   label:'Especiales',  icon:'⭐' },
   { to:'/mis-grupos',   label:'Mis grupos',  icon:'👥' },
   { to:'/perfil',       label:'Perfil',      icon:'👤' },
