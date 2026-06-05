@@ -86,7 +86,6 @@ export default function AppLayout() {
         </nav>
 
         <div style={{ padding:'1rem', borderTop:'1px solid var(--border)' }}>
-          {!admin && <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:'8px' }}><NotificationBell /></div>}
           {!admin && (
             <NavLink to="/perfil" style={{ textDecoration:'none', display:'block', marginBottom:'8px' }}>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'8px', borderRadius:'8px', transition:'background .15s', cursor:'pointer' }}
@@ -120,22 +119,30 @@ export default function AppLayout() {
         </div>
       </aside>
 
-      {/* ── Mobile header ── */}
-      <header className="mobile-header">
-        <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
-          <span style={{ fontSize:'20px' }}>🌍</span>
-          <span style={{ fontWeight:700, fontSize:'15px' }}>Quiniela 2026</span>
-        </div>
-        <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+      <div className="app-main">
+        {/* ── Desktop top bar ── */}
+        <div className="desktop-topbar">
+          <div style={{ flex:1 }} />
           {!admin && <NotificationBell />}
-          <button onClick={handleLogout} style={{ background:'none', border:'none', color:'var(--text-muted)', fontSize:'13px', cursor:'pointer', padding:'6px 10px', borderRadius:'6px', border:'1px solid var(--border)' }}>
-            Salir
-          </button>
         </div>
-      </header>
 
-      {/* ── Main content ── */}
-      <main className="main-content"><Outlet /></main>
+        {/* ── Mobile header ── */}
+        <header className="mobile-header">
+          <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+            <span style={{ fontSize:'20px' }}>🌍</span>
+            <span style={{ fontWeight:700, fontSize:'15px' }}>Quiniela 2026</span>
+          </div>
+          <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+            {!admin && <NotificationBell />}
+            <button onClick={handleLogout} style={{ background:'none', border:'none', color:'var(--text-muted)', fontSize:'13px', cursor:'pointer', padding:'6px 10px', borderRadius:'6px', border:'1px solid var(--border)' }}>
+              Salir
+            </button>
+          </div>
+        </header>
+
+        {/* ── Main content ── */}
+        <main className="main-content"><Outlet /></main>
+      </div>
 
       {/* ── Mobile bottom navigation ── */}
       {!admin && (
