@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import NotificationBell from '../NotificationBell';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/authStore';
 
@@ -11,7 +12,7 @@ const PLAYER_NAV = [
 ];
 
 const PLAYER_NAV_MORE = [
-  // { to:'/tablas',       label:'Tablas',      icon:'📊' },
+  { to:'/tablas',       label:'Tablas',      icon:'📊' },
   { to:'/especiales',   label:'Especiales',  icon:'⭐' },
   { to:'/mis-grupos',   label:'Mis grupos',  icon:'👥' },
   { to:'/perfil',       label:'Perfil',      icon:'👤' },
@@ -85,6 +86,7 @@ export default function AppLayout() {
         </nav>
 
         <div style={{ padding:'1rem', borderTop:'1px solid var(--border)' }}>
+          {!admin && <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:'8px' }}><NotificationBell /></div>}
           {!admin && (
             <NavLink to="/perfil" style={{ textDecoration:'none', display:'block', marginBottom:'8px' }}>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'8px', borderRadius:'8px', transition:'background .15s', cursor:'pointer' }}
@@ -124,9 +126,12 @@ export default function AppLayout() {
           <span style={{ fontSize:'20px' }}>🌍</span>
           <span style={{ fontWeight:700, fontSize:'15px' }}>Quiniela 2026</span>
         </div>
-        <button onClick={handleLogout} style={{ background:'none', border:'none', color:'var(--text-muted)', fontSize:'13px', cursor:'pointer', padding:'6px 10px', borderRadius:'6px', border:'1px solid var(--border)' }}>
-          Salir
-        </button>
+        <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+          {!admin && <NotificationBell />}
+          <button onClick={handleLogout} style={{ background:'none', border:'none', color:'var(--text-muted)', fontSize:'13px', cursor:'pointer', padding:'6px 10px', borderRadius:'6px', border:'1px solid var(--border)' }}>
+            Salir
+          </button>
+        </div>
       </header>
 
       {/* ── Main content ── */}

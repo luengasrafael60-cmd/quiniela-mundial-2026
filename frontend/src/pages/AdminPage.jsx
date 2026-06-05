@@ -616,6 +616,119 @@ function PhaseControlPanel({ state, onUpdate }) {
 }
 
 /* ── Página principal ── */
+
+/* ═══════════════════════════════════════════════
+   NOTIFICATIONS TAB
+   ═══════════════════════════════════════════════ */
+function NotificationsTab() {
+  const [notifs, setNotifs] = useState([]);
+  const [title, setTitle]   = useState('');
+  const [message, setMsg]   = useState('');
+  const [phase, setPhase]   = useState('groups');
+  const [saving, setSaving] = useState(false);
+
+  const phases = [
+    { key:'groups',        label:'Fase de Grupos' },
+    { key:'round16',       label:'Dieciseisavos' },
+    { key:'quarterfinals', label:'Octavos' },
+    { key:'semifinals',    label:'Cuartos' },
+    { key:'semifinal',     label:'Semifinales' },
+    { key:'third_place',   label:'Tercer Lugar' },
+    { key:'final',         label:'Final' },
+  ];
+
+  const load = async () => {
+    try { const { data } = await api.get('/notifications/admin'); setNotifs(data.notifications || []); } catch {}
+  };
+  useEffect(() => { load(); }, []);
+
+  const sendPhaseOpen = async (ph) => {
+    setSaving(true);
+    try { await api.post('/notifications/admin/phase-open', { phase: ph }); toast.success('Notificación enviada'); load(); }
+    catch { toast.error('Error'); }
+    setSaving(false);
+  };
+
+  const sendPhaseClosing = async (ph) => {
+    setSaving(true);
+    try { await api.post('/notifications/admin/phase-closing', { phase: ph }); toast.success('Aviso de cierre enviado'); load(); }
+    catch { toast.error('Error'); }
+    setSaving(false);
+  };
+
+  const sendCustom = async () => {
+    if (!title || !message) return toast.error('Título y mensaje requeridos');
+    setSaving(true);
+    try { await api.post('/notifications/admin', { title, message, type:'custom' }); toast.success('Notificación enviada'); setTitle(''); setMsg(''); load(); }
+    catch { toast.error('Error'); }
+    setSaving(false);
+  };
+
+  const deleteNotif = async (id) => {
+    try { await api.delete(`/notifications/admin/${id}`); load(); toast.success('Eliminada'); }
+    catch { toast.error('Error'); }
+  };
+
+  const timeAgo = (date) => {
+    const diff = Date.now() - new Date(date);
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Ahora';
+    if (mins < 60) return `Hace ${mins}m`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `Hace ${hrs}h`;
+    return `Hace ${Math.floor(hrs/24)}d`;
+  };
+
+  return (
+    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1.5rem', alignItems:'start' }}>
+      {/* Left: Quick actions */}
+      <div style={{ display:'flex', flexDirection:'column', gap:'1rem' }}>
+        {/* Phase open */}
+        <div className="card card-sm">
+          <h3 style={{ fontSize:'14px', fontWeight:600, marginBottom:'12px' }}>📢 Avisar fase disponible</h3>
+          <select value={phase} onChange={e=>setPhase(e.target.value)} className="form-input" style={{ marginBottom:'8px' }}>
+            {phases.map(p => <option key={p.key} value={p.key}>{p.label}</option>)}
+          </select>
+          <div style={{ display:'flex', gap:'8px' }}>
+            <button className="btn btn-success btn-sm" style={{ flex:1 }} onClick={() => sendPhaseOpen(phase)} disabled={saving}>
+              ✅ Fase abierta
+            </button>
+            <button className="btn btn-secondary btn-sm" style={{ flex:1, color:'var(--accent)' }} onClick={() => sendPhaseClosing(phase)} disabled={saving}>
+              ⏰ Cierre próximo
+            </button>
+          </div>
+        </div>
+
+        {/* Custom */}
+        <div className="card card-sm">
+          <h3 style={{ fontSize:'14px', fontWeight:600, marginBottom:'12px' }}>✏️ Notificación personalizada</h3>
+          <input value={title} onChange={e=>setTitle(e.target.value)} className="form-input" placeholder="Título" style={{ marginBottom:'8px' }} />
+          <textarea value={message} onChange={e=>setMsg(e.target.value)} className="form-input" placeholder="Mensaje" rows={3} style={{ marginBottom:'8px', resize:'vertical' }} />
+          <button className="btn btn-primary btn-sm btn-full" onClick={sendCustom} disabled={saving}>Enviar a todos</button>
+        </div>
+      </div>
+
+      {/* Right: History */}
+      <div className="card card-sm">
+        <h3 style={{ fontSize:'14px', fontWeight:600, marginBottom:'12px' }}>📋 Historial ({notifs.length})</h3>
+        <div style={{ display:'flex', flexDirection:'column', gap:'8px', maxHeight:400, overflowY:'auto' }}>
+          {notifs.length === 0 && <div style={{ color:'var(--text-muted)', fontSize:'13px', textAlign:'center', padding:'1rem' }}>Sin notificaciones</div>}
+          {notifs.map(n => (
+            <div key={n._id} style={{ background:'var(--bg-input)', borderRadius:'8px', padding:'10px 12px', display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:'8px' }}>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:'13px', fontWeight:600 }}>{n.title}</div>
+                <div style={{ fontSize:'12px', color:'var(--text-secondary)', marginTop:2 }}>{n.message}</div>
+                <div style={{ fontSize:'11px', color:'var(--text-muted)', marginTop:4 }}>{timeAgo(n.createdAt)} · {n.readBy?.length||0} leídas</div>
+              </div>
+              <button onClick={() => deleteNotif(n._id)} style={{ background:'none', border:'none', cursor:'pointer', color:'var(--text-muted)', fontSize:'16px', padding:'2px', flexShrink:0 }}>🗑</button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminPage() {
   const [stats,       setStats]       = useState({});
   const [state,       setState_]      = useState(null);
