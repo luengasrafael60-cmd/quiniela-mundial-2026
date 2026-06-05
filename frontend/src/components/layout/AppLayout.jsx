@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import NotificationBell from '../NotificationBell';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/authStore';
@@ -26,6 +26,12 @@ export default function AppLayout() {
   const { user, logout, isAdmin } = useAuthStore();
   const navigate = useNavigate();
   const admin = isAdmin();
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => { logout(); navigate('/login'); };
@@ -145,7 +151,7 @@ export default function AppLayout() {
       </div>
 
       {/* ── Mobile bottom navigation ── */}
-      {!admin && (
+      {isMobile && !admin && (
         <>
           <nav className="mobile-bottom-nav">
             {PLAYER_NAV.map(({ to, label, icon, exact }) => (
@@ -184,7 +190,7 @@ export default function AppLayout() {
       )}
 
       {/* Admin mobile bottom nav */}
-      {admin && (
+      {isMobile && admin && (
         <nav className="mobile-bottom-nav">
           <NavLink to="/admin" end style={mobileNavStyle}>
             <span style={{ fontSize:'20px' }}>📊</span>
