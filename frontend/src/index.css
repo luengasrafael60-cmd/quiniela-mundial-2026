@@ -182,7 +182,7 @@ input, select, textarea { font-family: inherit; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .sidebar { display: none; }
   .main-content { padding: 1rem; }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
