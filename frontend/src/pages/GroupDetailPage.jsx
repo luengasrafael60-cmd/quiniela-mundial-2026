@@ -359,7 +359,9 @@ export default function GroupDetailPage() {
                         </div>
                       </td>
                       <td>
-                        <button className="btn btn-ghost btn-sm" style={{ fontSize:'12px' }} onClick={() => setSelected(s)}>Ver picks</button>
+                        {(s.points > 0 || s.user.groupPoints > 0 || s.user.totalCorrect > 0) && (
+                          <button className="btn btn-ghost btn-sm" style={{ fontSize:'12px' }} onClick={() => setSelected(s)}>Ver picks</button>
+                        )}
                       </td>
                     </tr>
                   );
