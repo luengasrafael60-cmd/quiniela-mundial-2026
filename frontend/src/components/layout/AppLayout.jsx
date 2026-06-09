@@ -125,7 +125,6 @@ export default function AppLayout() {
           <span style={{ fontWeight:700, fontSize:'15px' }}>Quiniela 2026</span>
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
-          {!admin && <NotificationBell />}
           <button onClick={handleLogout} style={{ background:'none', border:'none', color:'var(--text-muted)', fontSize:'13px', cursor:'pointer', padding:'6px 10px', borderRadius:'6px', border:'1px solid var(--border)' }}>
             Salir
           </button>
