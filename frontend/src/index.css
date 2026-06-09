@@ -50,6 +50,7 @@ input, select, textarea { font-family: inherit; }
 
 /* Layout */
 .app-layout { display: flex; min-height: 100vh; }
+.app-main { display: flex; flex-direction: column; flex: 1; min-width: 0; overflow: hidden; }
 .sidebar {
   width: 240px;
   min-width: 240px;
