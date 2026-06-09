@@ -400,7 +400,7 @@ export default function GroupDetailPage() {
                 </div>
               </div>
               <div style={{ display:'flex', gap:'6px' }}>
-                <button className="btn btn-ghost btn-sm" style={{ fontSize:'12px', flex:1 }} onClick={()=>setSelected(s)}>Ver picks</button>
+                {/* <button className="btn btn-ghost btn-sm" style={{ fontSize:'12px', flex:1 }} onClick={()=>setSelected(s)}>Ver picks</button> */}
                 {isAdmin && !s.isMe && (
                   <button className="btn btn-danger btn-sm" style={{ fontSize:'12px' }} onClick={()=>handleKick(s.user._id, s.user.name)}>✕</button>
                 )}
