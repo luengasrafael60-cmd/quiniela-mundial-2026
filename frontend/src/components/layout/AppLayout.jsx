@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/authStore';
-import NotificationBell from '../NotificationBell';
 
 const PLAYER_NAV = [
   { to:'/',             label:'Inicio',      icon:'📊', exact:true },
@@ -12,10 +11,10 @@ const PLAYER_NAV = [
 ];
 
 const PLAYER_NAV_MORE = [
-  // { to:'/tablas',    label:'Tablas',      icon:'📊' },
-  { to:'/especiales',  label:'Especiales',  icon:'⭐' },
-  { to:'/mis-grupos',  label:'Mis grupos',  icon:'👥' },
-  { to:'/perfil',      label:'Perfil',      icon:'👤' },
+  { to:'/tablas',       label:'Tablas',      icon:'📊' },
+  { to:'/especiales',   label:'Especiales',  icon:'⭐' },
+  { to:'/mis-grupos',   label:'Mis grupos',  icon:'👥' },
+  { to:'/perfil',       label:'Perfil',      icon:'👤' },
 ];
 
 const ADMIN_NAV = [
@@ -27,13 +26,6 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const admin = isAdmin();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
-  useEffect(() => {
-    const handler = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener('resize', handler);
-    return () => window.removeEventListener('resize', handler);
-  }, []);
 
   const handleLogout = () => { logout(); navigate('/login'); };
   const initials = user?.name?.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()||'?';
@@ -56,8 +48,7 @@ export default function AppLayout() {
 
   return (
     <div className="app-layout">
-
-      {/* ── Sidebar — desktop only ── */}
+      {/* ── Sidebar desktop ── */}
       <aside className="sidebar">
         <div style={{ padding:'1.5rem 1.25rem', borderBottom:'1px solid var(--border)' }}>
           <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
@@ -94,9 +85,12 @@ export default function AppLayout() {
         </nav>
 
         <div style={{ padding:'1rem', borderTop:'1px solid var(--border)' }}>
+          {!admin && <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:'8px' }}><NotificationBell /></div>}
           {!admin && (
             <NavLink to="/perfil" style={{ textDecoration:'none', display:'block', marginBottom:'8px' }}>
-              <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'8px', borderRadius:'8px' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'8px', borderRadius:'8px', transition:'background .15s', cursor:'pointer' }}
+                onMouseEnter={e=>e.currentTarget.style.background='var(--bg-card)'}
+                onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                 <div style={{ width:36, height:36, borderRadius:'50%', background:'var(--accent-dim)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', fontWeight:700, color:'var(--accent)', flexShrink:0 }}>
                   {initials}
                 </div>
@@ -110,41 +104,40 @@ export default function AppLayout() {
               </div>
             </NavLink>
           )}
+          {admin && (
+            <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'8px', marginBottom:'8px' }}>
+              <div style={{ width:36, height:36, borderRadius:'50%', background:'rgba(139,92,246,.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'16px', flexShrink:0 }}>⚙️</div>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:'13px', fontWeight:600 }}>{user?.name}</div>
+                <div style={{ fontSize:'11px', color:'var(--purple)', fontWeight:600 }}>Administrador</div>
+              </div>
+            </div>
+          )}
           <button className="btn btn-ghost btn-sm btn-full" onClick={handleLogout} style={{ justifyContent:'center' }}>
             Cerrar sesión
           </button>
         </div>
       </aside>
 
-      {/* ── Right side: topbar + content ── */}
-      <div className="app-main">
-
-        {/* Desktop topbar with bell — hidden on mobile */}
-        <div className="desktop-topbar">
-          <div style={{ flex:1 }} />
-          {!admin && <NotificationBell />}
+      {/* ── Mobile header ── */}
+      <header className="mobile-header">
+        <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+          <span style={{ fontSize:'20px' }}>🌍</span>
+          <span style={{ fontWeight:700, fontSize:'15px' }}>Quiniela 2026</span>
         </div>
+        <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+          {!admin && <NotificationBell />}
+          <button onClick={handleLogout} style={{ background:'none', border:'none', color:'var(--text-muted)', fontSize:'13px', cursor:'pointer', padding:'6px 10px', borderRadius:'6px', border:'1px solid var(--border)' }}>
+            Salir
+          </button>
+        </div>
+      </header>
 
-        {/* Mobile header — hidden on desktop */}
-        <header className="mobile-header">
-          <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
-            <span style={{ fontSize:'20px' }}>🌍</span>
-            <span style={{ fontWeight:700, fontSize:'15px' }}>Quiniela 2026</span>
-          </div>
-          <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
-            {!admin && <NotificationBell />}
-            <button onClick={handleLogout} style={{ background:'none', border:'none', color:'var(--text-muted)', fontSize:'13px', cursor:'pointer', padding:'6px 10px', borderRadius:'6px', border:'1px solid var(--border)' }}>
-              Salir
-            </button>
-          </div>
-        </header>
+      {/* ── Main content ── */}
+      <main className="main-content"><Outlet /></main>
 
-        {/* Main content */}
-        <main className="main-content"><Outlet /></main>
-      </div>
-
-      {/* Mobile bottom nav — only rendered when mobile */}
-      {isMobile && !admin && (
+      {/* ── Mobile bottom navigation ── */}
+      {!admin && (
         <>
           <nav className="mobile-bottom-nav">
             {PLAYER_NAV.map(({ to, label, icon, exact }) => (
@@ -153,13 +146,15 @@ export default function AppLayout() {
                 <span>{label}</span>
               </NavLink>
             ))}
-            <button onClick={() => setMenuOpen(o => !o)}
-              style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'3px', padding:'6px 8px', fontSize:'10px', fontWeight:400, color: menuOpen ? 'var(--accent)' : 'var(--text-muted)', background:'none', border:'none', cursor:'pointer', flex:1 }}>
+            <button
+              onClick={() => setMenuOpen(o => !o)}
+              style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'3px', padding:'6px 8px', borderRadius:'8px', fontSize:'10px', fontWeight:400, color: menuOpen ? 'var(--accent)' : 'var(--text-muted)', background:'none', border:'none', cursor:'pointer', flex:1 }}>
               <span style={{ fontSize:'20px' }}>☰</span>
               <span>Más</span>
             </button>
           </nav>
 
+          {/* More menu drawer */}
           {menuOpen && (
             <div style={{ position:'fixed', bottom:'65px', left:0, right:0, background:'var(--bg-card)', borderTop:'1px solid var(--border)', borderRadius:'16px 16px 0 0', padding:'1rem', zIndex:200, boxShadow:'0 -4px 20px rgba(0,0,0,.3)' }}
               onClick={() => setMenuOpen(false)}>
@@ -180,7 +175,8 @@ export default function AppLayout() {
         </>
       )}
 
-      {isMobile && admin && (
+      {/* Admin mobile bottom nav */}
+      {admin && (
         <nav className="mobile-bottom-nav">
           <NavLink to="/admin" end style={mobileNavStyle}>
             <span style={{ fontSize:'20px' }}>📊</span>
@@ -192,7 +188,6 @@ export default function AppLayout() {
           </button>
         </nav>
       )}
-
     </div>
   );
 }
