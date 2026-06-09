@@ -85,7 +85,6 @@ export default function AppLayout() {
         </nav>
 
         <div style={{ padding:'1rem', borderTop:'1px solid var(--border)' }}>
-          {!admin && <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:'8px' }}><NotificationBell /></div>}
           {!admin && (
             <NavLink to="/perfil" style={{ textDecoration:'none', display:'block', marginBottom:'8px' }}>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'8px', borderRadius:'8px', transition:'background .15s', cursor:'pointer' }}
