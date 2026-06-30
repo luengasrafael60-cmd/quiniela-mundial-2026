@@ -263,8 +263,8 @@ export default function BracketPage() {
             const cfg = PHASE_CONFIG.find(p => p.key === activePhase);
             return cfg && (
               <div style={{ display:'flex', gap:'8px', marginBottom:'1rem', flexWrap:'wrap', alignItems:'center' }}>
-                <span className="badge badge-blue">Ganador correcto: +{cfg.pts} pts</span>
-                <span className="badge badge-gold">Marcador exacto: +{cfg.pts + cfg.bonus} pts</span>
+                {/* <span className="badge badge-blue">Ganador correcto: +{cfg.pts} pts</span>
+                <span className="badge badge-gold">Marcador exacto: +{cfg.pts + cfg.bonus} pts</span> */}
                 {isActiveLocked && <span className="badge badge-red">🔒 Pronósticos cerrados</span>}
               </div>
             );

@@ -718,8 +718,7 @@ function NotificationsTab() {
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontSize:'13px', fontWeight:600 }}>{n.title}</div>
                 <div style={{ fontSize:'12px', color:'var(--text-secondary)', marginTop:2 }}>{n.message}</div>
-                <div style={{ fontSize:'11px', color:'var(--text-muted)', marginTop:4 }}>{timeAgo(n.createdAt)} · {n.readBy?.length||0} leídas</div>
-              </div>
+                </div>
               <button onClick={() => deleteNotif(n._id)} style={{ background:'none', border:'none', cursor:'pointer', color:'var(--text-muted)', fontSize:'16px', padding:'2px', flexShrink:0 }}>🗑</button>
             </div>
           ))}
